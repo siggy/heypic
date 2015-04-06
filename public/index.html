@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+    <script type="text/javascript">
+      var map = null;
+
+      function initialize() {
+        map = new google.maps.Map(document.getElementById('map-canvas'), {
+          center: { lat: 30, lng: 0},
+          zoom: 2
+        });
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+      var ws = new WebSocket("ws://localhost:8080");
+
+      ws.onopen = function(evt) {
+        console.log("Connection open. Sending message...");
+        ws.send("Hello WebSockets!");
+      };
+
+      ws.onmessage = function(evt) {
+        var json = JSON.parse(evt.data);
+
+        if (json.geo) {
+          var marker = new google.maps.Marker({
+            position: {lat: json.geo.coordinates[0], lng: json.geo.coordinates[1]},
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title: json.text,
+            icon: {
+              url: json.user.profile_image_url_https,
+              size: new google.maps.Size(20, 20),
+              origin: new google.maps.Point(0,0),
+              anchor: new google.maps.Point(0, 20)
+            }
+          });
+          var infowindow = new google.maps.InfoWindow({
+            content: json.text
+          });
+          google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);
+          });
+        }
+      };
+
+      ws.onclose = function(evt) {
+        console.log("Connection closed.");
+      };
+
+      ws.onerror = function(err) {
+        console.log(err.name + " => " + err.message);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
