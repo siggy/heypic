@@ -134,12 +134,33 @@ func main() {
           }
           coordsArr, ok := coordinates[0].([]interface{})
 
+          var minLat float64 = 90
+          var minLon float64 = 180
+          var maxLat float64 = -90
+          var maxLon float64 = -180
+
           for _,coordInterface := range coordsArr {
             coord := coordInterface.([]interface{})
-            // todo: take average of bounding box
             lon = coord[0].(float64)
             lat = coord[1].(float64)
+
+            if (lon < minLon) {
+              minLon = lon
+            }
+            if (lon > maxLon) {
+              maxLon = lon
+            }
+
+            if (lat < minLat) {
+              minLat = lat
+            }
+            if (lat > maxLat) {
+              maxLat = lat
+            }
           }
+
+          lon = (maxLon + minLon) / 2
+          lat = (maxLat + minLat) / 2
         }
 
         output := make(map[string]interface{})

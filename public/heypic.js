@@ -1,6 +1,6 @@
 var map         = null;
 var markers     = [];
-var infoWindow  = new google.maps.InfoWindow();
+var infoWindow  = new google.maps.InfoWindow({maxWidth: 200});
 var MAX_MARKERS = 100;
 var INTERVAL    = 2000;
 
@@ -56,7 +56,7 @@ ws.onmessage = function(evt) {
   google.maps.event.addListener(marker, 'click', function() {
     infoWindow.setContent(
       '<a target="_blank" href=\"' + json.heypic.img_url + '\">' +
-        '<img src=\"' + json.heypic.img_url +
+        '<img width="150" height="150" src=\"' + json.heypic.img_url +
           ':thumb\" alt="original image" title="original image">' +
       '</a>' +
       '<div>' + json.tweet.text +'</div>');
