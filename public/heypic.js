@@ -53,13 +53,16 @@ ws.onmessage = function(evt) {
     markers.shift().setMap(null);
   }
 
+  var text = twttr.txt.autoLink(json.tweet.text, {urlEntities: json.tweet.entities.media});
+  text = text.replace(/<a /g, '<a target="_blank" ');
+
   google.maps.event.addListener(marker, 'click', function() {
     infoWindow.setContent(
       '<a target="_blank" href=\"' + json.heypic.img_url + '\">' +
         '<img width="150" height="150" src=\"' + json.heypic.img_url +
           ':thumb\" alt="original image" title="original image">' +
       '</a>' +
-      '<div>' + json.tweet.text +'</div>');
+      '<div>' + text + '</div>');
     infoWindow.open(map, marker);
   });
 };
