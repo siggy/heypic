@@ -24,6 +24,12 @@ var (
   logLevel         *string = flag.String("logging", "debug", "Which log level: [debug,info,warn,error,fatal]")
 )
 
+type Heypic struct {
+  Lat    float64  `json:"lat"`
+  Lon    float64  `json:"lon"`
+  ImgUrl string   `json:"img_url"`
+}
+
 func main() {
 
   flag.Parse()
@@ -50,7 +56,8 @@ func main() {
     stream <- line
   }))
 
-  err := client.Filter(nil, []string{"photo"}, nil, []string{"-180,-90,180,90"}, false, done)
+  // err := client.Filter(nil, []string{"photo"}, nil, []string{"-180,-90,180,90"}, false, done)
+  err := client.Filter(nil, nil, nil, []string{"-180,-90,180,90"}, false, done)
   if err != nil {
     httpstream.Log(httpstream.ERROR, err.Error())
   } else {
@@ -62,30 +69,93 @@ func main() {
         err := json.Unmarshal(tw, &f)
         if err != nil {
           httpstream.Log(httpstream.ERROR, err.Error())
-        } else {
-          tweet, ok := f.(map[string]interface{})
-          if ok {
-            user, ok := tweet["user"].(map[string]interface{})
-            if ok {
-              if tweet["geo"] != nil ||
-                  tweet["place"] != nil ||
-                  (user["location"] != nil && len(user["location"].(string)) != 0) {
-                fmt.Println("geo:", tweet["id_str"])
+          continue
+        }
 
-                entities, ok := tweet["entities"].(map[string]interface{})
-                if ok {
-                  mediaArray, ok := entities["media"].([]interface{})
-                  if ok && len(mediaArray) > 0 {
-                    media, ok := mediaArray[0].(map[string]interface{})
-                    if ok {
-                      fmt.Println(media["media_url_https"])
-                    }
-                  }
-                }
-              }
-            }
+        tweet, ok := f.(map[string]interface{})
+        if !ok {
+          continue
+        }
+
+        if tweet["geo"] == nil && tweet["place"] == nil {
+          continue
+        }
+
+        if tweet["possibly_sensitive"].(bool) {
+          continue
+        }
+
+        entities, ok := tweet["entities"].(map[string]interface{})
+        if !ok {
+          continue
+        }
+
+        mediaArray, ok := entities["media"].([]interface{})
+        if !ok || len(mediaArray) == 0 {
+          continue
+        }
+
+        media, ok := mediaArray[0].(map[string]interface{})
+        if !ok {
+          continue
+        }
+
+        var lat float64
+        var lon float64
+
+        // todo: use user.location
+        if tweet["geo"] != nil {
+          geo, ok := tweet["geo"].(map[string]interface{})
+          if !ok {
+            continue
+          }
+
+          coordinates, ok := geo["coordinates"].([]interface{})
+          if !ok {
+            continue
+          }
+
+          lat = coordinates[0].(float64)
+          lon = coordinates[1].(float64)
+        } else if tweet["place"] != nil {
+          place, ok := tweet["place"].(map[string]interface{})
+          if !ok {
+            continue
+          }
+
+          boundingBox, ok := place["bounding_box"].(map[string]interface{})
+          if !ok {
+            continue
+          }
+
+          coordinates, ok := boundingBox["coordinates"].([]interface{})
+          if !ok {
+            continue
+          }
+          coordsArr, ok := coordinates[0].([]interface{})
+
+          for _,coordInterface := range coordsArr {
+            coord := coordInterface.([]interface{})
+            // todo: take average of bounding box
+            lon = coord[0].(float64)
+            lat = coord[1].(float64)
           }
         }
+
+        output := make(map[string]interface{})
+        output["tweet"] = tweet
+        output["heypic"] = &Heypic{
+          Lat: lat,
+          Lon: lon,
+          ImgUrl: media["media_url_https"].(string),
+        }
+        jsonOutput, err := json.Marshal(output)
+        if err != nil {
+          httpstream.Log(httpstream.ERROR, err.Error())
+          continue
+        }
+
+        fmt.Println(string(jsonOutput))
       }
     }()
   }

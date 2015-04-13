@@ -9,7 +9,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
     <script type="text/javascript">
-      var map = null;
+      var map         = null;
+      var markers     = [];
+      var MAX_MARKERS = 100;
+      var infoWindow  = new google.maps.InfoWindow();
 
       function initialize() {
         map = new google.maps.Map(document.getElementById('map-canvas'), {
@@ -29,26 +32,33 @@
       ws.onmessage = function(evt) {
         var json = JSON.parse(evt.data);
 
-        if (json.geo) {
-          var marker = new google.maps.Marker({
-            position: {lat: json.geo.coordinates[0], lng: json.geo.coordinates[1]},
-            map: map,
-            animation: google.maps.Animation.DROP,
-            title: json.text,
-            icon: {
-              url: json.user.profile_image_url_https,
-              size: new google.maps.Size(20, 20),
-              origin: new google.maps.Point(0,0),
-              anchor: new google.maps.Point(0, 20)
-            }
-          });
-          var infowindow = new google.maps.InfoWindow({
-            content: json.text
-          });
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map, marker);
-          });
+        var marker = new google.maps.Marker({
+          position: {lat: json.heypic.lat, lng: json.heypic.lon},
+          map: map,
+          animation: google.maps.Animation.DROP,
+          title: json.tweet.text,
+          icon: {
+            url: json.tweet.user.profile_image_url_https,
+            size: new google.maps.Size(20, 20),
+            origin: new google.maps.Point(0,0),
+            anchor: new google.maps.Point(0, 20)
+          }
+        });
+
+        markers.push(marker);
+        if (markers.length > MAX_MARKERS) {
+          markers.shift().setMap(null);
         }
+
+        google.maps.event.addListener(marker, 'click', function() {
+          infoWindow.setContent(
+            '<a target="_blank" href=\"' + json.heypic.img_url + '\">' +
+              '<img src=\"' + json.heypic.img_url +
+                ':thumb\" alt="original image" title="original image">' +
+            '</a>' +
+            '<div>' + json.tweet.text +'</div>');
+          infoWindow.open(map, marker);
+        });
       };
 
       ws.onclose = function(evt) {
