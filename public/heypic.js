@@ -1,12 +1,26 @@
 var map         = null;
 var markers     = [];
-var MAX_MARKERS = 100;
 var infoWindow  = new google.maps.InfoWindow();
+var MAX_MARKERS = 100;
+var INTERVAL    = 2000;
 
 function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), {
     center: { lat: 30, lng: 0},
     zoom: 2
+  });
+
+  var interval = setInterval(
+    function() {
+      if (markers.length > 0) {
+        google.maps.event.trigger(markers[markers.length - 1], 'click');
+      }
+    },
+    INTERVAL
+  );
+
+  google.maps.event.addListener(map, 'click', function() {
+    clearInterval(interval);
   });
 }
 google.maps.event.addDomListener(window, 'load', initialize);
