@@ -1,4 +1,8 @@
-# heypic
+heypic.me on go
+===============
+
+Local
+-----
 
     $ go get github.com/araddon/httpstream
     $ go install
