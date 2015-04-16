@@ -17,3 +17,4 @@ Heroku
 
     go get github.com/kr/godep
     godep save
+    git push heroku heroku:master
