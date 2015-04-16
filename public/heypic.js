@@ -25,7 +25,14 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-var ws = new WebSocket("ws://localhost:8080");
+var loc = window.location, ws_uri;
+if (loc.protocol === "https:") {
+    ws_uri = "wss:";
+} else {
+    ws_uri = "ws:";
+}
+ws_uri += "//" + loc.host + loc.pathname;
+var ws = new WebSocket(ws_uri);
 
 ws.onopen = function(evt) {
   console.log("Connection open. Sending message...");
