@@ -1,4 +1,4 @@
-heypic.me on go
+heypic.me, in go
 ===============
 
 Local
