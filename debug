@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Download websocketd for your platform from
+# https://github.com/joewalnes/websocketd/wiki/Download-and-install
+
+go install && websocketd --port=8080 --devconsole heypic \
+  --ck=$TWITTER_CONSUMER_KEY \
+  --cs=$TWITTER_CONSUMER_SECRET \
+  --ot=$TWITTER_OAUTH_TOKEN \
+  --os=$TWITTER_OAUTH_TOKEN_SECRET
