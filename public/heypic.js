@@ -34,12 +34,23 @@ if (loc.protocol === "https:") {
 ws_uri += "//" + loc.host + loc.pathname;
 var ws = new WebSocket(ws_uri);
 
+setInterval(
+  function() {
+    ws.send(window.location.search.substr(1));
+  },
+  INTERVAL
+);
+
 ws.onopen = function(evt) {
-  console.log("Connection open. Sending message...");
-  ws.send("Hello WebSockets!");
+  console.log("Connection open");
 };
 
 ws.onmessage = function(evt) {
+
+  // ws.send("SIGGY");
+  console.log(evt.data);
+  return;
+
   var json = JSON.parse(evt.data);
 
   var marker = new google.maps.Marker({
@@ -75,6 +86,7 @@ ws.onmessage = function(evt) {
 };
 
 ws.onclose = function(evt) {
+  ws.send("SIGclose");
   console.log("Connection closed.");
 };
 
