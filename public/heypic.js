@@ -2,12 +2,14 @@ var map         = null;
 var markers     = [];
 var infoWindow  = new google.maps.InfoWindow({maxWidth: 200});
 var MAX_MARKERS = 100;
-var INTERVAL    = 2000;
+var INTERVAL    = 3000;
 
 function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), {
     center: { lat: 30, lng: 0},
-    zoom: 2
+    zoom: 2,
+    disableDefaultUI: true,
+    mapTypeId: google.maps.MapTypeId.SATELLITE
   });
 
   var interval = setInterval(

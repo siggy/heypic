@@ -10,6 +10,7 @@ Setup
 Local
 -----
 
+    $ go install
     $ ./run
 
 Debug
