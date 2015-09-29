@@ -81,7 +81,7 @@ func main() {
           continue
         }
 
-        if tweet["possibly_sensitive"].(bool) {
+        if tweet["possibly_sensitive"] != nil && tweet["possibly_sensitive"].(bool) {
           continue
         }
 
