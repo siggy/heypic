@@ -1,0 +1,4 @@
+github.com/araddon/httpstream v0.0.0-20170221192225-96fc3b5dd5b3 h1:7WYafAJUM87Qy8hiIleZgcMmxkze6fF1RvSI3YuC1HQ=
+github.com/araddon/httpstream v0.0.0-20170221192225-96fc3b5dd5b3/go.mod h1:bY/MDFknw/nyY+716DAexqelRUjB67Bxi4P5K31k4ws=
+github.com/mrjones/oauth v0.0.0-20190623134757-126b35219450 h1:j2kD3MT1z4PXCiUllUJF9mWUESr9TWKS7iEKsQ/IipM=
+github.com/mrjones/oauth v0.0.0-20190623134757-126b35219450/go.mod h1:skjdDftzkFALcuGzYSklqYd8gvat6F1gZJ4YPVbkZpM=
