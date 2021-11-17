@@ -1,19 +1,20 @@
-heypic.me, in go
-===============
+# heypic.me, in go
 
-Setup
------
+## Setup
 
-    $ go get github.com/araddon/httpstream
-    $ go get github.com/joewalnes/websocketd
+```bash
+go mody tidy
+```
 
-Local
------
+## Local
 
-    $ go install
-    $ ./run
+```bash
+go install
+./run
+```
 
-Debug
------
+## Debug
 
-    $ ./debug
+```bash
+./debug
+```
