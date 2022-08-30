@@ -25,6 +25,7 @@ function initialize() {
     clearInterval(interval);
   });
 }
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
 var loc = window.location, ws_uri;
